@@ -25,8 +25,8 @@ describe('Levenshtein Distance', () => {
   test('real name examples', () => {
     expect(levenshteinDistance('Wei Lin Tan', 'Wei Lin Tan')).toBe(0);
     expect(levenshteinDistance('Maria Santos', 'Marie Santos')).toBe(1);
-    expect(levenshteinDistance('Li Wei Chen', 'Li Wei Tan')).toBe(2);
-    expect(levenshteinDistance('Alexandra Rodriguez', 'Alex Rodriguez')).toBe(4);
+    expect(levenshteinDistance('Li Wei Chen', 'Li Wei Tan')).toBe(3);
+    expect(levenshteinDistance('Alexandra Rodriguez', 'Alex Rodriguez')).toBe(5);
   });
 
   test('case sensitivity', () => {
