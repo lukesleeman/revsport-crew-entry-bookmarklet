@@ -2,16 +2,44 @@ import { matchNames } from './matching/nameMatcher.js';
 
 function getEligibleMemberNamesFromButtons() {
   const addButtons = document.querySelectorAll('.addToTeam[data-member_name]');
+  const currentCrewNames = getCurrentCrewMemberNames();
   const memberNames = [];
 
   addButtons.forEach(button => {
     const name = button.getAttribute('data-member_name');
-    if (name) {
-      memberNames.push(name.trim());
+    if (name && isButtonClickable(button)) {
+      const trimmedName = name.trim();
+      // Don't include members who are already in the crew
+      if (!currentCrewNames.includes(trimmedName)) {
+        memberNames.push(trimmedName);
+      }
     }
   });
 
   return memberNames;
+}
+
+function getCurrentCrewMemberNames() {
+  const removeButtons = document.querySelectorAll('.removeFromTeam[data-member_name]');
+  const crewNames = [];
+  
+  removeButtons.forEach(button => {
+    const name = button.getAttribute('data-member_name');
+    if (name) {
+      crewNames.push(name.trim());
+    }
+  });
+  
+  return crewNames;
+}
+
+function isButtonClickable(button) {
+  // Check if button is visible and not disabled
+  const style = window.getComputedStyle(button);
+  const isVisible = style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+  const isEnabled = !button.hasAttribute('disabled') && !button.classList.contains('disabled');
+  
+  return isVisible && isEnabled;
 }
 
 function createBulkAddSection() {
