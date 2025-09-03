@@ -27,12 +27,7 @@ function matchNames(inputNames, eligibleMembers, options = {}) {
     minThreshold = 0.4
   } = options;
 
-  const result = {
-    highConfidence: [],
-    mediumConfidence: [],
-    lowConfidence: [],
-    noMatch: []
-  };
+  const allResults = [];
 
   for (const inputName of inputNames) {
     const normalizedInput = normalizeName(inputName);
@@ -50,31 +45,43 @@ function matchNames(inputNames, eligibleMembers, options = {}) {
       }
     }
 
-    // Categorize match based on similarity
+    // Create result object with category
     if (bestSimilarity >= highThreshold) {
-      result.highConfidence.push({
+      allResults.push({
         input: inputName,
         match: bestMatch,
-        confidence: bestSimilarity
+        confidence: bestSimilarity,
+        category: 'high'
       });
     } else if (bestSimilarity >= mediumThreshold) {
-      result.mediumConfidence.push({
+      allResults.push({
         input: inputName,
         match: bestMatch,
-        confidence: bestSimilarity
+        confidence: bestSimilarity,
+        category: 'medium'
       });
     } else if (bestSimilarity >= minThreshold) {
-      result.lowConfidence.push({
+      allResults.push({
         input: inputName,
         match: bestMatch,
-        confidence: bestSimilarity
+        confidence: bestSimilarity,
+        category: 'low'
       });
     } else {
-      result.noMatch.push(inputName);
+      allResults.push({
+        input: inputName,
+        category: 'none'
+      });
     }
   }
 
-  return result;
+  // Sort by confidence (highest first), with no matches at the end
+  return allResults.sort((a, b) => {
+    if (a.category === 'none' && b.category !== 'none') return 1;
+    if (a.category !== 'none' && b.category === 'none') return -1;
+    if (a.category === 'none' && b.category === 'none') return 0;
+    return b.confidence - a.confidence;
+  });
 }
 
 module.exports = { matchNames };

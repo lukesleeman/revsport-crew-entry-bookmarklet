@@ -1,4 +1,5 @@
 import { clearAllCrewMembers } from './clearAllCrewMembers.js';
+import { createBulkAddSection } from './bulkAddUI.js';
 
 (function() {
   'use strict';
@@ -65,6 +66,9 @@ import { clearAllCrewMembers } from './clearAllCrewMembers.js';
     color: #333;
   `;
   
+  // Create bulk add section
+  const { bulkAddSection } = createBulkAddSection();
+
   // Create clear all button
   const clearAllBtn = document.createElement('button');
   clearAllBtn.textContent = 'Clear All Crew Members';
@@ -110,7 +114,7 @@ import { clearAllCrewMembers } from './clearAllCrewMembers.js';
   closeBtn.onmouseout = function() {
     this.style.background = '#6c757d';
   };
-  
+
   // Add event listeners
   clearAllBtn.addEventListener('click', function() {
     clearAllCrewMembers(overlay);
@@ -129,6 +133,7 @@ import { clearAllCrewMembers } from './clearAllCrewMembers.js';
   
   // Assemble modal
   modal.appendChild(title);
+  modal.appendChild(bulkAddSection);
   modal.appendChild(clearAllBtn);
   modal.appendChild(closeBtn);
   overlay.appendChild(modal);
