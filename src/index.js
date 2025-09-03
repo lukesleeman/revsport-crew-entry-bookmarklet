@@ -14,58 +14,22 @@ import './styles/buttons.css';
   // Prevent multiple instances
   const existingOverlay = document.getElementById('revsport-crew-helper-overlay');
   if (existingOverlay) {
-    existingOverlay.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 10000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-    `;
     return;
   }
   
   // Create overlay
   const overlay = document.createElement('div');
   overlay.id = 'revsport-crew-helper-overlay';
-  overlay.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-  `;
+  overlay.className = 'revsport-bookmarklet-overlay';
   
   // Create modal
   const modal = document.createElement('div');
-  modal.style.cssText = `
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-  `;
+  modal.className = 'revsport-bookmarklet-modal';
   
   // Create title
   const title = document.createElement('h2');
   title.textContent = 'RevSport Crew Helper';
-  title.style.cssText = `
-    margin: 0 0 20px 0;
-    color: #333;
-  `;
+  title.className = 'revsport-bookmarklet-title';
   
   // Create bulk add section
   const { bulkAddSection } = createBulkAddSection();
