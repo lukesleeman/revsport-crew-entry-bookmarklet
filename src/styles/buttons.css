@@ -30,8 +30,6 @@
 .revsport-bookmarklet-btn-primary {
   background: #007bff;
   color: white;
-  padding: 8px 16px;
-  font-size: 14px;
   margin-right: 10px;
 }
 
@@ -42,8 +40,6 @@
 .revsport-bookmarklet-btn-success {
   background: #28a745;
   color: white;
-  padding: 10px 20px;
-  font-size: 14px;
   margin-top: 15px;
   width: 100%;
 }
