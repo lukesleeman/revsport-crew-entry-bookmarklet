@@ -1,0 +1,53 @@
+/* RevSport Bookmarklet Button Styles */
+.revsport-bookmarklet-btn {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background 0.3s;
+}
+
+.revsport-bookmarklet-btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.revsport-bookmarklet-btn-danger:hover {
+  background: #c82333;
+}
+
+.revsport-bookmarklet-btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.revsport-bookmarklet-btn-secondary:hover {
+  background: #5a6268;
+}
+
+.revsport-bookmarklet-btn-primary {
+  background: #007bff;
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.revsport-bookmarklet-btn-primary:hover {
+  background: #0056b3;
+}
+
+.revsport-bookmarklet-btn-success {
+  background: #28a745;
+  color: white;
+  padding: 10px 20px;
+  font-size: 14px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.revsport-bookmarklet-btn-success:hover {
+  background: #218838;
+}

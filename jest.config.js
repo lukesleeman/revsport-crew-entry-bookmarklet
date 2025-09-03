@@ -8,5 +8,8 @@ module.exports = {
     'src/**/*.js',
     '!src/**/*.test.js'
   ],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
+  }
 };

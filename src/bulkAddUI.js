@@ -36,25 +36,7 @@ function createBulkAddSection() {
 
   const findMatchesBtn = document.createElement('button');
   findMatchesBtn.textContent = 'Find Matches';
-  findMatchesBtn.style.cssText = `
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-right: 10px;
-    transition: background 0.3s;
-  `;
-
-  findMatchesBtn.onmouseover = function() {
-    this.style.background = '#0056b3';
-  };
-
-  findMatchesBtn.onmouseout = function() {
-    this.style.background = '#007bff';
-  };
+  findMatchesBtn.className = 'revsport-bookmarklet-btn revsport-bookmarklet-btn-primary';
 
   const resultsContainer = document.createElement('div');
   resultsContainer.id = 'match-results';
@@ -188,26 +170,7 @@ function displayMatchResults(matchResults, resultsContainer, nameInput) {
 function createAddSelectedButton(resultsContainer, nameInput) {
   const addSelectedBtn = document.createElement('button');
   addSelectedBtn.textContent = 'Add Selected Members';
-  addSelectedBtn.style.cssText = `
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 15px;
-    width: 100%;
-    transition: background 0.3s;
-  `;
-
-  addSelectedBtn.onmouseover = function() {
-    this.style.background = '#218838';
-  };
-
-  addSelectedBtn.onmouseout = function() {
-    this.style.background = '#28a745';
-  };
+  addSelectedBtn.className = 'revsport-bookmarklet-btn revsport-bookmarklet-btn-success';
 
   addSelectedBtn.addEventListener('click', function() {
     const selectedCheckboxes = resultsContainer.querySelectorAll('input[type="checkbox"]:checked');
