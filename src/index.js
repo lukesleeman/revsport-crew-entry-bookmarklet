@@ -1,4 +1,6 @@
 import { clearAllCrewMembers } from './clearAllCrewMembers.js';
+import { createBulkAddSection } from './bulkAddUI.js';
+import './styles/buttons.css';
 
 (function() {
   'use strict';
@@ -65,52 +67,19 @@ import { clearAllCrewMembers } from './clearAllCrewMembers.js';
     color: #333;
   `;
   
+  // Create bulk add section
+  const { bulkAddSection } = createBulkAddSection();
+
   // Create clear all button
   const clearAllBtn = document.createElement('button');
   clearAllBtn.textContent = 'Clear All Crew Members';
-  clearAllBtn.style.cssText = `
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 10px;
-    transition: background 0.3s;
-  `;
-  
-  clearAllBtn.onmouseover = function() {
-    this.style.background = '#c82333';
-  };
-  
-  clearAllBtn.onmouseout = function() {
-    this.style.background = '#dc3545';
-  };
+  clearAllBtn.className = 'revsport-bookmarklet-btn revsport-bookmarklet-btn-danger';
   
   // Create close button
   const closeBtn = document.createElement('button');
   closeBtn.textContent = 'Close';
-  closeBtn.style.cssText = `
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 10px;
-    transition: background 0.3s;
-  `;
-  
-  closeBtn.onmouseover = function() {
-    this.style.background = '#5a6268';
-  };
-  
-  closeBtn.onmouseout = function() {
-    this.style.background = '#6c757d';
-  };
-  
+  closeBtn.className = 'revsport-bookmarklet-btn revsport-bookmarklet-btn-secondary';
+
   // Add event listeners
   clearAllBtn.addEventListener('click', function() {
     clearAllCrewMembers(overlay);
@@ -129,6 +98,7 @@ import { clearAllCrewMembers } from './clearAllCrewMembers.js';
   
   // Assemble modal
   modal.appendChild(title);
+  modal.appendChild(bulkAddSection);
   modal.appendChild(clearAllBtn);
   modal.appendChild(closeBtn);
   overlay.appendChild(modal);
