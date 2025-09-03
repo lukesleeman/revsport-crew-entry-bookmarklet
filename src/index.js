@@ -14,6 +14,10 @@ import './styles/buttons.css';
   // Prevent multiple instances
   const existingOverlay = document.getElementById('revsport-crew-helper-overlay');
   if (existingOverlay) {
+    // Set overlay back to visible
+    existingOverlay.style.display = 'flex';
+
+    // Since its already setup, we don't need to do anything further
     return;
   }
   
