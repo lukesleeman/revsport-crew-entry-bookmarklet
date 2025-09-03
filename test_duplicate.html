@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Duplicate Member Addition</title>
+</head>
+<body>
+    <h1>Test DOM Structure</h1>
+    
+    <!-- Eligible member (can be added) -->
+    <div class="eligibleMemberCard">
+        <div class="addToTeam btn btn-sm btn-icon btn-light-dark" data-member_name="Test User 1" data-member_id="123">
+            <i class="fal fa-plus"></i>
+        </div>
+    </div>
+    
+    <!-- Current crew member (already added) -->
+    <div class="crew-member">
+        <button type="button" class="btn btn-sm btn-light-danger removeFromTeam btn-icon" data-member_name="Test User 2" data-member_id="456">
+            <i class="fal fa-trash"></i>
+        </button>
+    </div>
+
+    <script>
+        // Test our selector
+        function testSelector() {
+            const addButtons = document.querySelectorAll('.addToTeam[data-member_name]');
+            const removeButtons = document.querySelectorAll('.removeFromTeam[data-member_name]');
+            
+            console.log('Add buttons found:', addButtons.length);
+            addButtons.forEach(btn => console.log('Add button name:', btn.getAttribute('data-member_name')));
+            
+            console.log('Remove buttons found:', removeButtons.length);
+            removeButtons.forEach(btn => console.log('Remove button name:', btn.getAttribute('data-member_name')));
+        }
+        
+        testSelector();
+    </script>
+</body>
+</html>
