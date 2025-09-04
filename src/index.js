@@ -1,5 +1,5 @@
 import { clearAllCrewMembers } from './clearAllCrewMembers.js';
-import { createBulkAddSection } from './bulkAddUI.js';
+import { createBulkAddSection, createStatsSection } from './bulkAddUI.js';
 import './styles/buttons.css';
 
 (function() {
@@ -64,11 +64,15 @@ import './styles/buttons.css';
     }
   });
   
+  // Create stats section
+  const statsSection = createStatsSection();
+
   // Assemble modal
   modal.appendChild(title);
   modal.appendChild(bulkAddSection);
   modal.appendChild(clearAllBtn);
   modal.appendChild(closeBtn);
+  modal.appendChild(statsSection);
   overlay.appendChild(modal);
   
   // Add to page

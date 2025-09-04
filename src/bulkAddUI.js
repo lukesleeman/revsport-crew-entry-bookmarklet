@@ -47,11 +47,6 @@ function createBulkAddSection() {
   const bulkAddSection = document.createElement('div');
   bulkAddSection.className = 'revsport-bookmarklet-bulk-section';
 
-  // Add mapping stats display
-  const statsDiv = document.createElement('div');
-  statsDiv.className = 'revsport-bookmarklet-stats';
-  updateStatsDisplay(statsDiv);
-
   const nameInput = document.createElement('textarea');
   nameInput.placeholder = 'Paste names here (one per line)';
   nameInput.className = 'revsport-bookmarklet-textarea';
@@ -64,17 +59,23 @@ function createBulkAddSection() {
   resultsContainer.id = 'match-results';
   resultsContainer.className = 'revsport-bookmarklet-results';
 
-  bulkAddSection.appendChild(statsDiv);
   bulkAddSection.appendChild(nameInput);
   bulkAddSection.appendChild(findMatchesBtn);
   bulkAddSection.appendChild(resultsContainer);
 
   // Add event listener
   findMatchesBtn.addEventListener('click', function() {
-    handleFindMatches(nameInput, resultsContainer, statsDiv);
+    handleFindMatches(nameInput, resultsContainer);
   });
 
   return { bulkAddSection, nameInput, resultsContainer };
+}
+
+function createStatsSection() {
+  const statsDiv = document.createElement('div');
+  statsDiv.className = 'revsport-bookmarklet-stats';
+  updateStatsDisplay(statsDiv);
+  return statsDiv;
 }
 
 function updateStatsDisplay(statsDiv) {
@@ -85,7 +86,7 @@ function updateStatsDisplay(statsDiv) {
   `;
 }
 
-function handleFindMatches(nameInput, resultsContainer, statsDiv) {
+function handleFindMatches(nameInput, resultsContainer) {
   const inputText = nameInput.value.trim();
   if (!inputText) {
     alert('Please enter some names to match.');
@@ -110,7 +111,7 @@ function handleFindMatches(nameInput, resultsContainer, statsDiv) {
 
     const userMappings = loadMappings();
     const matchResults = matchNames(inputNames, eligibleMembers, userMappings);
-    displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers, statsDiv);
+    displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers);
   } catch (error) {
     console.error('Error matching names:', error);
     alert('Error occurred while matching names. Please try again.');
@@ -183,7 +184,7 @@ function createDropdown(currentMatch, possibleMatches, eligibleMembers, inputNam
   return select;
 }
 
-function displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers, statsDiv) {
+function displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers) {
   resultsContainer.innerHTML = '';
   resultsContainer.style.display = 'block';
 
@@ -298,7 +299,10 @@ function displayMatchResults(matchResults, resultsContainer, nameInput, eligible
 
     if (addedCount > 0) {
       // Update stats display after saving
-      updateStatsDisplay(statsDiv);
+      const statsDiv = document.querySelector('.revsport-bookmarklet-stats');
+      if (statsDiv) {
+        updateStatsDisplay(statsDiv);
+      }
       alert(`Successfully added ${addedCount} member${addedCount === 1 ? '' : 's'} to the crew!${errorCount > 0 ? ` (${errorCount} failed)` : ''}`);
       resultsContainer.style.display = 'none';
       nameInput.value = '';
@@ -308,4 +312,4 @@ function displayMatchResults(matchResults, resultsContainer, nameInput, eligible
   });
 }
 
-export { createBulkAddSection, getEligibleMemberNamesFromButtons };
+export { createBulkAddSection, createStatsSection, getEligibleMemberNamesFromButtons };
