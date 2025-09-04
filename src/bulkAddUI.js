@@ -140,7 +140,8 @@ function createDropdown(currentMatch, possibleMatches, eligibleMembers, inputNam
   }
   select.appendChild(noMatchOption);
   
-  // Add separator
+  // Add suggestions if available
+  const addedNames = new Set([currentMatch]);
   if (possibleMatches && possibleMatches.length > 0) {
     const separator = document.createElement('option');
     separator.disabled = true;
@@ -148,7 +149,6 @@ function createDropdown(currentMatch, possibleMatches, eligibleMembers, inputNam
     select.appendChild(separator);
     
     // Add top matches
-    const addedNames = new Set([currentMatch]);
     possibleMatches.forEach(match => {
       if (!addedNames.has(match.name)) {
         const option = document.createElement('option');
@@ -159,24 +159,24 @@ function createDropdown(currentMatch, possibleMatches, eligibleMembers, inputNam
         addedNames.add(match.name);
       }
     });
-    
-    // Add separator for all members
-    const allSeparator = document.createElement('option');
-    allSeparator.disabled = true;
-    allSeparator.textContent = '── All Members ──';
-    select.appendChild(allSeparator);
-    
-    // Add all eligible members alphabetically
-    const sortedMembers = [...eligibleMembers].sort();
-    sortedMembers.forEach(member => {
-      if (!addedNames.has(member)) {
-        const option = document.createElement('option');
-        option.value = member;
-        option.textContent = member;
-        select.appendChild(option);
-      }
-    });
   }
+  
+  // Always add separator for all members
+  const allSeparator = document.createElement('option');
+  allSeparator.disabled = true;
+  allSeparator.textContent = '── All Members ──';
+  select.appendChild(allSeparator);
+  
+  // Add all eligible members alphabetically
+  const sortedMembers = [...eligibleMembers].sort();
+  sortedMembers.forEach(member => {
+    if (!addedNames.has(member)) {
+      const option = document.createElement('option');
+      option.value = member;
+      option.textContent = member;
+      select.appendChild(option);
+    }
+  });
   
   // Store the input name for later use
   select.dataset.inputName = inputName;

@@ -139,6 +139,9 @@ function improvedMatchNames(inputNames, eligibleMembers, userMappings = {}) {
       }
     }
     
+    // Always calculate possible matches for the dropdown
+    const possibleMatches = findTopMatches(inputName, eligibleMembers, 5);
+    
     // Create result object
     allResults.push({
       input: inputName,
@@ -146,7 +149,7 @@ function improvedMatchNames(inputNames, eligibleMembers, userMappings = {}) {
       confidence: bestScore,
       reason: bestReason,
       isUserMapping: isUserMapping,
-      possibleMatches: !isUserMapping ? findTopMatches(inputName, eligibleMembers, 5) : []
+      possibleMatches: possibleMatches
     });
   }
   
