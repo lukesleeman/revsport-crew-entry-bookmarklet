@@ -1,10 +1,10 @@
 # RevSport Crew Entry Bookmarklet
 
-A powerful bookmarklet that helps revolutioniseSPORT users quickly add multiple crew members to their events by matching names intelligently and remembering user preferences.
+A helpful bookmarklet that allows revolutioniseSPORT users quickly add multiple athletes into to regatta crews by matching names intelligently and remembering user preferences.
 
 ## Features
 
-- **Smart Name Matching**: Uses advanced algorithms to match names even with variations, typos, or partial names
+- **Smart Name Matching**: Uses several strategies to match names even with variations, typos, or partial names
 - **Bulk Operations**: Add multiple crew members at once by pasting a list of names
 - **User Memory**: Remembers your name mapping choices for future use
 - **Flexible Selection**: Manual override options for all matches
@@ -55,6 +55,13 @@ The bookmarklet remembers your name mapping choices:
 - When you manually select a different match, it's saved for next time
 - Saved mappings take priority over algorithmic suggestions
 - View your saved mappings count at the bottom of the interface
+
+## Why build this?
+
+Revsport is used by dragon boating clubs throughout Australia to manage their crew registrations for regattas.  Many clubs use 3rd party systems to help design their crew configs - either custom software or various excel spreadsheets.  These systems help with tasks such as ensuring boats are balanced, and that members are spread across different crews, following an overall regatta strategy.  Copying the crew configs from these systems into revsport can be time consuming and error prone.  Any mistakes in crew entry may result in an athlete not being able to race - so the stakes are high!
+
+This bookmarklet allows you to copy a list of names from whatever system your using to configure crews, and paste it directly into revsport.  This is both much faster, and reduces the opportunity for mistakes.
+
 
 ## Development
 
