@@ -7,17 +7,22 @@ class BookmarkletPlugin {
     compiler.hooks.afterEmit.tap('BookmarkletPlugin', (compilation) => {
       const outputPath = path.resolve(__dirname, 'dist');
       const jsFile = path.join(outputPath, 'bookmarklet.js');
-      const bookmarkletFile = path.join(outputPath, 'bookmarklet.md');
-      const templateFile = path.join(__dirname, 'templates', 'bookmarklet.md');
+      const readmePath = path.resolve(__dirname, 'README.md');
       
-      if (fs.existsSync(jsFile) && fs.existsSync(templateFile)) {
+      if (fs.existsSync(jsFile) && fs.existsSync(readmePath)) {
         const jsContent = fs.readFileSync(jsFile, 'utf8');
         const bookmarkletUrl = `javascript:${encodeURIComponent(jsContent)}`;
         
-        const templateContent = fs.readFileSync(templateFile, 'utf8');
-        const markdownContent = templateContent.replace(/{{BOOKMARKLET_URL}}/g, bookmarkletUrl);
+        let readmeContent = fs.readFileSync(readmePath, 'utf8');
         
-        fs.writeFileSync(bookmarkletFile, markdownContent);
+        // Replace the manual installation code block
+        readmeContent = readmeContent.replace(
+          /(<!-- BOOKMARKLET_CODE_START -->\n```\n)[\s\S]*?(\n```\n<!-- BOOKMARKLET_CODE_END -->)/,
+          `$1${bookmarkletUrl}$2`
+        );
+        
+        fs.writeFileSync(readmePath, readmeContent);
+        console.log('✅ README.md updated with current bookmarklet');
       }
     });
   }
