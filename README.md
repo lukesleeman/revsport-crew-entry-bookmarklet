@@ -44,8 +44,8 @@ javascript:var%20bookmarklet%3B(()%3D%3E%7Bvar%20e%3D%7B56%3A(e%2Ct%2Cn)%3D%3E%7
 The bookmarklet intelligently matches names using multiple strategies:
 - **Exact matches**: Perfect name matches
 - **First name matching**: Matches people by first name when surnames differ
-- **Prefix matching**: Handles shortened names (e.g., "Sam" → "Samantha")
-- **Initial patterns**: Matches "Sam F" to "Samantha French"
+- **Prefix matching**: Handles shortened names (e.g., "Chris" → "Christopher")
+- **Initial patterns**: Matches "Tim C" to "Tim Cooper "
 - **Fuzzy matching**: Handles typos and variations
 - **Substring matching**: Finds names contained within longer names
 
