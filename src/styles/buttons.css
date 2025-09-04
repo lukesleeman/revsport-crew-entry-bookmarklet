@@ -66,7 +66,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     text-align: center;
-    max-width: 400px;
+    max-width: 600px;
     width: 90%;
 }
 
@@ -74,3 +74,84 @@
     margin: 0 0 20px 0;
     color: #333;
 }
+
+/* Bulk Add Section Styles */
+.revsport-bookmarklet-bulk-section {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.revsport-bookmarklet-stats {
+    background: #f0f8ff;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #666;
+}
+
+.revsport-bookmarklet-textarea {
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+
+.revsport-bookmarklet-results {
+    margin-top: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    display: none;
+}
+
+.revsport-bookmarklet-match-item {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.revsport-bookmarklet-match-checkbox {
+    margin: 0;
+}
+
+.revsport-bookmarklet-match-label {
+    min-width: 120px;
+    font-weight: bold;
+    color: #333;
+}
+
+.revsport-bookmarklet-match-arrow {
+    color: #999;
+}
+
+.revsport-bookmarklet-match-select {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+    max-width: 300px;
+}
+
+.revsport-bookmarklet-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+}
+

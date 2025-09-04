@@ -1,4 +1,5 @@
 import { matchNames } from './matching/nameMatcher.js';
+import { loadMappings, addMapping, getMappingStats } from './utils/cookieManager.js';
 
 function getEligibleMemberNamesFromButtons() {
   const addButtons = document.querySelectorAll('.addToTeam[data-member_name]');
@@ -44,23 +45,16 @@ function isButtonClickable(button) {
 
 function createBulkAddSection() {
   const bulkAddSection = document.createElement('div');
-  bulkAddSection.style.cssText = `
-    margin-bottom: 20px;
-    text-align: left;
-  `;
+  bulkAddSection.className = 'revsport-bookmarklet-bulk-section';
+
+  // Add mapping stats display
+  const statsDiv = document.createElement('div');
+  statsDiv.className = 'revsport-bookmarklet-stats';
+  updateStatsDisplay(statsDiv);
 
   const nameInput = document.createElement('textarea');
   nameInput.placeholder = 'Paste names here (one per line)';
-  nameInput.style.cssText = `
-    width: 100%;
-    height: 120px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    resize: vertical;
-    margin-bottom: 10px;
-  `;
+  nameInput.className = 'revsport-bookmarklet-textarea';
 
   const findMatchesBtn = document.createElement('button');
   findMatchesBtn.textContent = 'Find Matches';
@@ -68,29 +62,30 @@ function createBulkAddSection() {
 
   const resultsContainer = document.createElement('div');
   resultsContainer.id = 'match-results';
-  resultsContainer.style.cssText = `
-    margin-top: 15px;
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    padding: 10px;
-    display: none;
-  `;
+  resultsContainer.className = 'revsport-bookmarklet-results';
 
+  bulkAddSection.appendChild(statsDiv);
   bulkAddSection.appendChild(nameInput);
   bulkAddSection.appendChild(findMatchesBtn);
   bulkAddSection.appendChild(resultsContainer);
 
-  // Add event listeners
+  // Add event listener
   findMatchesBtn.addEventListener('click', function() {
-    handleFindMatches(nameInput, resultsContainer);
+    handleFindMatches(nameInput, resultsContainer, statsDiv);
   });
 
   return { bulkAddSection, nameInput, resultsContainer };
 }
 
-function handleFindMatches(nameInput, resultsContainer) {
+function updateStatsDisplay(statsDiv) {
+  const stats = getMappingStats();
+  statsDiv.innerHTML = `
+    <strong>Saved Mappings:</strong> ${stats.count} name${stats.count !== 1 ? 's' : ''} remembered
+    ${stats.count > 0 ? '<br><small>The bookmarklet remembers your selections for future use</small>' : ''}
+  `;
+}
+
+function handleFindMatches(nameInput, resultsContainer, statsDiv) {
   const inputText = nameInput.value.trim();
   if (!inputText) {
     alert('Please enter some names to match.');
@@ -113,15 +108,82 @@ function handleFindMatches(nameInput, resultsContainer) {
       return;
     }
 
-    const matchResult = matchNames(inputNames, eligibleMembers);
-    displayMatchResults(matchResult, resultsContainer, nameInput);
+    const userMappings = loadMappings();
+    const matchResults = matchNames(inputNames, eligibleMembers, userMappings);
+    displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers, statsDiv);
   } catch (error) {
     console.error('Error matching names:', error);
     alert('Error occurred while matching names. Please try again.');
   }
 }
 
-function displayMatchResults(matchResults, resultsContainer, nameInput) {
+function createDropdown(currentMatch, possibleMatches, eligibleMembers, inputName) {
+  const select = document.createElement('select');
+  select.className = 'revsport-bookmarklet-match-select';
+  
+  // Add current match as first option
+  if (currentMatch) {
+    const option = document.createElement('option');
+    option.value = currentMatch;
+    option.textContent = currentMatch;
+    option.selected = true;
+    select.appendChild(option);
+  }
+  
+  // Add "No match" option
+  const noMatchOption = document.createElement('option');
+  noMatchOption.value = '';
+  noMatchOption.textContent = '-- No match --';
+  if (!currentMatch) {
+    noMatchOption.selected = true;
+  }
+  select.appendChild(noMatchOption);
+  
+  // Add separator
+  if (possibleMatches && possibleMatches.length > 0) {
+    const separator = document.createElement('option');
+    separator.disabled = true;
+    separator.textContent = '── Suggestions ──';
+    select.appendChild(separator);
+    
+    // Add top matches
+    const addedNames = new Set([currentMatch]);
+    possibleMatches.forEach(match => {
+      if (!addedNames.has(match.name)) {
+        const option = document.createElement('option');
+        option.value = match.name;
+        const confidence = Math.round(match.score * 100);
+        option.textContent = `${match.name} (${confidence}%)`;
+        select.appendChild(option);
+        addedNames.add(match.name);
+      }
+    });
+    
+    // Add separator for all members
+    const allSeparator = document.createElement('option');
+    allSeparator.disabled = true;
+    allSeparator.textContent = '── All Members ──';
+    select.appendChild(allSeparator);
+    
+    // Add all eligible members alphabetically
+    const sortedMembers = [...eligibleMembers].sort();
+    sortedMembers.forEach(member => {
+      if (!addedNames.has(member)) {
+        const option = document.createElement('option');
+        option.value = member;
+        option.textContent = member;
+        select.appendChild(option);
+      }
+    });
+  }
+  
+  // Store the input name for later use
+  select.dataset.inputName = inputName;
+  
+  return select;
+}
+
+function displayMatchResults(matchResults, resultsContainer, nameInput, eligibleMembers, statsDiv) {
   resultsContainer.innerHTML = '';
   resultsContainer.style.display = 'block';
 
@@ -130,79 +192,90 @@ function displayMatchResults(matchResults, resultsContainer, nameInput) {
     return;
   }
 
+  const matchesContainer = document.createElement('div');
+
   matchResults.forEach((match) => {
     const matchDiv = document.createElement('div');
-    matchDiv.style.cssText = `
-      padding: 8px 12px;
-      margin-bottom: 5px;
-      border: 1px solid #eee;
-      border-radius: 3px;
-      background: #f8f9fa;
-      display: flex;
-      align-items: center;
-    `;
+    matchDiv.className = 'revsport-bookmarklet-match-item';
 
-    if (match.category === 'none') {
-      const icon = document.createElement('span');
-      icon.textContent = '❓';
-      icon.style.cssText = 'margin-right: 8px; color: #6c757d;';
-      
-      const text = document.createElement('span');
-      text.textContent = match.input;
-      text.style.cssText = 'color: #6c757d;';
-      
-      matchDiv.appendChild(icon);
-      matchDiv.appendChild(text);
-    } else {
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = match.category === 'high';
-      checkbox.style.cssText = 'margin-right: 8px;';
-      checkbox.dataset.inputName = match.input;
-      checkbox.dataset.matchedName = match.match;
+    // Checkbox for selection
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = match.confidence >= 0.85 || match.isUserMapping;
+    checkbox.className = 'revsport-bookmarklet-match-checkbox';
+    checkbox.dataset.inputName = match.input;
 
-      const icon = document.createElement('span');
-      icon.style.cssText = 'margin-right: 8px;';
-      if (match.category === 'high') {
-        icon.textContent = '✅';
-      } else if (match.category === 'medium') {
-        icon.textContent = '⚠️';
-      } else {
-        icon.textContent = '❌';
-      }
+    // Label showing the input name
+    const inputLabel = document.createElement('div');
+    inputLabel.className = 'revsport-bookmarklet-match-label';
+    inputLabel.textContent = match.input;
 
-      const content = document.createElement('div');
-      content.style.cssText = 'flex: 1;';
-      
-      const confidence = Math.round(match.confidence * 100);
-      content.innerHTML = `
-        <strong>${match.input}</strong> → ${match.match}
-        <small style="color: #6c757d; margin-left: 8px;">(${confidence}%)</small>
-      `;
+    // Arrow
+    const arrow = document.createElement('span');
+    arrow.textContent = '→';
+    arrow.className = 'revsport-bookmarklet-match-arrow';
 
-      matchDiv.appendChild(checkbox);
-      matchDiv.appendChild(icon);
-      matchDiv.appendChild(content);
-    }
+    // Dropdown for selecting the match
+    const dropdown = createDropdown(
+      match.match, 
+      match.possibleMatches, 
+      eligibleMembers,
+      match.input
+    );
 
-    resultsContainer.appendChild(matchDiv);
+    // Update checkbox value when dropdown changes
+    dropdown.addEventListener('change', function() {
+      checkbox.dataset.matchedName = dropdown.value;
+      checkbox.checked = dropdown.value !== '';
+    });
+
+    // Set initial checkbox value
+    checkbox.dataset.matchedName = dropdown.value;
+
+    matchDiv.appendChild(checkbox);
+    matchDiv.appendChild(inputLabel);
+    matchDiv.appendChild(arrow);
+    matchDiv.appendChild(dropdown);
+
+    matchesContainer.appendChild(matchDiv);
   });
 
-  const hasSelectableMatches = matchResults.some(match => match.category !== 'none');
-  if (hasSelectableMatches) {
-    const addSelectedBtn = createAddSelectedButton(resultsContainer, nameInput);
-    resultsContainer.appendChild(addSelectedBtn);
-  }
-}
+  resultsContainer.appendChild(matchesContainer);
 
-function createAddSelectedButton(resultsContainer, nameInput) {
+  // Add action buttons
+  const actionContainer = document.createElement('div');
+  actionContainer.className = 'revsport-bookmarklet-actions';
+
   const addSelectedBtn = document.createElement('button');
   addSelectedBtn.textContent = 'Add Selected Members';
   addSelectedBtn.className = 'revsport-bookmarklet-btn revsport-bookmarklet-btn-success';
 
+  actionContainer.appendChild(addSelectedBtn);
+  resultsContainer.appendChild(actionContainer);
+
   addSelectedBtn.addEventListener('click', function() {
     const selectedCheckboxes = resultsContainer.querySelectorAll('input[type="checkbox"]:checked');
-    const selectedMembers = Array.from(selectedCheckboxes).map(cb => cb.dataset.matchedName);
+    
+    // Save mappings for all selected items where the user changed the dropdown
+    selectedCheckboxes.forEach(checkbox => {
+      const inputName = checkbox.dataset.inputName;
+      const matchedName = checkbox.dataset.matchedName;
+      const dropdown = checkbox.parentElement.querySelector('select');
+      
+      if (matchedName && dropdown) {
+        // Get the original match to see if user changed it
+        const originalMatch = dropdown.options[0]?.value || '';
+        
+        // Save if this is a user-modified selection
+        if (matchedName !== originalMatch && matchedName !== '') {
+          addMapping(inputName, matchedName);
+        }
+      }
+    });
+    
+    const selectedMembers = Array.from(selectedCheckboxes)
+      .map(cb => cb.dataset.matchedName)
+      .filter(name => name && name !== '');
     
     if (selectedMembers.length === 0) {
       alert('Please select at least one member to add.');
@@ -214,16 +287,18 @@ function createAddSelectedButton(resultsContainer, nameInput) {
     
     selectedMembers.forEach(memberName => {
       const addButton = document.querySelector(`.addToTeam[data-member_name="${memberName}"]`);
-      if (addButton) {
+      if (addButton && isButtonClickable(addButton)) {
         addButton.click();
         addedCount++;
       } else {
-        console.error(`Could not find add button for member: ${memberName}`);
+        console.error(`Could not find or click add button for member: ${memberName}`);
         errorCount++;
       }
     });
 
     if (addedCount > 0) {
+      // Update stats display after saving
+      updateStatsDisplay(statsDiv);
       alert(`Successfully added ${addedCount} member${addedCount === 1 ? '' : 's'} to the crew!${errorCount > 0 ? ` (${errorCount} failed)` : ''}`);
       resultsContainer.style.display = 'none';
       nameInput.value = '';
@@ -231,8 +306,6 @@ function createAddSelectedButton(resultsContainer, nameInput) {
       alert('Failed to add any members. Please check the page and try again.');
     }
   });
-
-  return addSelectedBtn;
 }
 
 export { createBulkAddSection, getEligibleMemberNamesFromButtons };
