@@ -10,6 +10,8 @@ A helpful bookmarklet that allows revolutioniseSPORT users quickly add multiple 
 - **Flexible Selection**: Manual override options for all matches
 - **Clean Interface**: Modal overlay that doesn't interfere with the existing page
 
+![video of the bookmarklet in action](bookmarklet-demo.gif)
+
 ## Installation
 
 **Installation Instructions:**
